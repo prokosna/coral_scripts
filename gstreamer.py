@@ -25,6 +25,7 @@ from PIL import Image
 GObject.threads_init()
 Gst.init(None)
 
+
 def on_bus_message(bus, message, loop):
     t = message.type
     if t == Gst.MessageType.EOS:
@@ -38,6 +39,7 @@ def on_bus_message(bus, message, loop):
         loop.quit()
     return True
 
+
 def on_new_sample(sink, overlay, screen_size, appsink_size, user_function):
     sample = sink.emit('pull-sample')
     buf = sample.get_buffer()
@@ -50,6 +52,7 @@ def on_new_sample(sink, overlay, screen_size, appsink_size, user_function):
     buf.unmap(mapinfo)
     return Gst.FlowReturn.OK
 
+
 def detectCoralDevBoard():
   try:
     if 'MX8MQ' in open('/sys/firmware/devicetree/base/model').read():
@@ -58,9 +61,10 @@ def detectCoralDevBoard():
   except: pass
   return False
 
+
 def run_pipeline(user_function,
-                 src_size=(640,480),
-                 appsink_size=(320, 180)):
+                 src_size=(640, 480),
+                 appsink_size=(640, 480)):
     PIPELINE = 'v4l2src device=/dev/video0 ! {src_caps} ! {leaky_q} '
     if detectCoralDevBoard():
         SRC_CAPS = 'video/x-raw,format=YUY2,width={width},height={height},framerate=30/1'

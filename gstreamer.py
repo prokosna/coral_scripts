@@ -14,8 +14,6 @@
 
 import sys
 from functools import partial
-import svgwrite
-
 import gi
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
@@ -45,28 +43,27 @@ def on_new_sample(sink, overlay, screen_size, appsink_size, user_function):
     buf = sample.get_buffer()
     result, mapinfo = buf.map(Gst.MapFlags.READ)
     if result:
-      img = Image.frombytes('RGB', (appsink_size[0], appsink_size[1]), mapinfo.data, 'raw')
-      svg_canvas = svgwrite.Drawing('', size=(screen_size[0], screen_size[1]))
-      user_function(img, svg_canvas)
-      overlay.set_property('data', svg_canvas.tostring())
+        img = Image.frombytes('RGB', (appsink_size[0], appsink_size[1]), mapinfo.data, 'raw')
+        user_function(img)
     buf.unmap(mapinfo)
     return Gst.FlowReturn.OK
 
 
-def detectCoralDevBoard():
-  try:
-    if 'MX8MQ' in open('/sys/firmware/devicetree/base/model').read():
-      print('Detected Edge TPU dev board.')
-      return True
-  except: pass
-  return False
+def detect_coral_dev_board():
+    try:
+        if 'MX8MQ' in open('/sys/firmware/devicetree/base/model').read():
+            print('Detected Edge TPU dev board.')
+            return True
+    except:
+        pass
+    return False
 
 
 def run_pipeline(user_function,
-                 src_size=(640, 480),
-                 appsink_size=(640, 480)):
+                 src_size=(1280, 720),
+                 appsink_size=(960, 540)):
     PIPELINE = 'v4l2src device=/dev/video0 ! {src_caps} ! {leaky_q} '
-    if detectCoralDevBoard():
+    if detect_coral_dev_board():
         SRC_CAPS = 'video/x-raw,format=YUY2,width={width},height={height},framerate=30/1'
         PIPELINE += """ ! glupload ! tee name=t
             t. ! {leaky_q} ! glfilterbin filter=glcolorscale
@@ -91,8 +88,10 @@ def run_pipeline(user_function,
     dl_caps = DL_CAPS.format(width=appsink_size[0], height=appsink_size[1])
     sink_caps = SINK_CAPS.format(width=appsink_size[0], height=appsink_size[1])
     pipeline = PIPELINE.format(leaky_q=LEAKY_Q,
-        src_caps=src_caps, dl_caps=dl_caps, sink_caps=sink_caps,
-        sink_element=SINK_ELEMENT)
+                               src_caps=src_caps,
+                               dl_caps=dl_caps,
+                               sink_caps=sink_caps,
+                               sink_element=SINK_ELEMENT)
 
     print('Gstreamer pipeline: ', pipeline)
     pipeline = Gst.parse_launch(pipeline)
@@ -100,8 +99,10 @@ def run_pipeline(user_function,
     overlay = pipeline.get_by_name('overlay')
     appsink = pipeline.get_by_name('appsink')
     appsink.connect('new-sample', partial(on_new_sample,
-        overlay=overlay, screen_size = src_size,
-        appsink_size=appsink_size, user_function=user_function))
+                                          overlay=overlay,
+                                          screen_size=src_size,
+                                          appsink_size=appsink_size,
+                                          user_function=user_function))
     loop = GObject.MainLoop()
 
     # Set up a pipeline bus watch to catch errors.

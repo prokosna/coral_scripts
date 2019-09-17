@@ -20,7 +20,7 @@ def upload_to_gcs(bucket, path, image, file_name):
 
 
 def upload(bucket, path, image):
-    file_name = 'image_{}.png'.format(math.floor(datetime.utcnow().timestamp() * 1000))
+    file_name = 'image_{}.jpg'.format(math.floor(datetime.utcnow().timestamp() * 1000))
     ret = executor.submit(upload_to_gcs, bucket, path, image, file_name)
 
     def finished(job):

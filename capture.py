@@ -66,6 +66,7 @@ def main():
                 last_time = time.monotonic()
 
     if args.manual:
+        input_monitor.daemon = True
         input_monitor.start()
         print('monitoring keyboard input...')
 

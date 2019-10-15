@@ -22,6 +22,7 @@ if grep -s -q "MX8MQ" /sys/firmware/devicetree/base/model; then
   # Original
   sudo pip3 install google-cloud-storage
   sudo pip3 install Pillow
+  sudo pip3 install paho-mqtt
 else
   # Install gstreamer
   sudo apt-get install -y gstreamer1.0-plugins-bad gstreamer1.0-plugins-good python3-gst-1.0 python3-gi
@@ -40,4 +41,5 @@ else
   # Original
   sudo pip3 install google-cloud-storage
   sudo pip3 install Pillow
+  sudo pip3 install paho-mqtt
 fi

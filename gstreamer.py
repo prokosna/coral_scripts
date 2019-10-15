@@ -14,6 +14,8 @@
 
 import sys
 from functools import partial
+import svgwrite
+
 import gi
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
@@ -43,8 +45,10 @@ def on_new_sample(sink, overlay, screen_size, appsink_size, user_function):
     buf = sample.get_buffer()
     result, mapinfo = buf.map(Gst.MapFlags.READ)
     if result:
-        img = Image.frombytes('RGB', (appsink_size[0], appsink_size[1]), mapinfo.data, 'raw')
-        user_function(img)
+      img = Image.frombytes('RGB', (appsink_size[0], appsink_size[1]), mapinfo.data, 'raw')
+      svg_canvas = svgwrite.Drawing('', size=(screen_size[0], screen_size[1]))
+      user_function(img, svg_canvas)
+      overlay.set_property('data', svg_canvas.tostring())
     buf.unmap(mapinfo)
     return Gst.FlowReturn.OK
 

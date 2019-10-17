@@ -39,6 +39,7 @@ def main():
     last_time = time.monotonic()
 
     input_monitor = InputMonitor()
+    led = LED(gpio_b=6, gpio_g=7, gpio_r=8, invert=True)
 
     def user_callback(image, svg_canvas):
         nonlocal input_monitor
@@ -71,6 +72,7 @@ def main():
 
     def message_callback(payload):
         print('Message received: {}'.format(payload))
+        led.switch_green(duration=5)
 
     mqtt.add_message_callback(message_callback)
 

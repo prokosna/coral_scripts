@@ -41,7 +41,8 @@ class LED:
         self._lock.release()
 
     def _start_switch_off_timer(self, call_id, duration):
-        th = threading.Thread(target=self._switch_off_delay, args=(call_id, duration))
+        th = threading.Thread(target=self._switch_off_delay,
+                              args=(call_id, duration))
         th.start()
 
     def _switch_off_delay(self, call_id, duration):

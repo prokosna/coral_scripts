@@ -11,6 +11,8 @@ from led import LED
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--project', help='GCP Project')
+    parser.add_argument('--bucket', help='GCS bucket name')
+    parser.add_argument('--path', help='GCS path prefix for uploading images')
     parser.add_argument('--region', help='GCP Region')
     parser.add_argument('--registry_id', help='IoT Core Registry ID')
     parser.add_argument('--device_id', help='IoT Core Device ID')

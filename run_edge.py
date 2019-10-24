@@ -25,7 +25,7 @@ def main():
     parser.add_argument('--model', help='.tflite model file')
     parser.add_argument('--labels', help='.txt label file')
     parser.add_argument('--threshold', help='Class Score Threshold',
-                        type=float, default=0.9)
+                        type=float, default=0.7)
     args = parser.parse_args()
 
     engine = ClassificationEngine(args.model)

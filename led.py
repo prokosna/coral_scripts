@@ -5,7 +5,7 @@ from periphery import GPIO
 
 
 class LED:
-    def __init__(self, gpio_g=1, gpio_r=2, gpio_b=3, invert=False):
+    def __init__(self, gpio_r=1, gpio_b=2, gpio_g=3, invert=False):
         self._lock = threading.Lock()
         self._gpio_g = GPIO(gpio_g, "out")
         self._gpio_r = GPIO(gpio_r, "out")

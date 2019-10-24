@@ -77,8 +77,6 @@ def on_disconnect(unused_client, unused_userdata, rc):
 def on_message(unused_client, unused_userdata, message):
     """Callback when the device receives a message on a subscription."""
     payload = str(message.payload.decode('utf-8'))
-    print('Received message \'{}\' on topic \'{}\' with Qos {}'.format(
-        payload, message.topic, str(message.qos)))
     lock.acquire()
     for callback in message_callbacks:
         callback(payload)

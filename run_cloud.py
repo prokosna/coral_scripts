@@ -1,5 +1,6 @@
 import argparse
 import time
+import json
 
 import gstreamer
 import upload
@@ -73,8 +74,20 @@ def main():
         args.mqtt_port)
 
     def message_callback(payload):
-        print('Message received: {}'.format(payload))
-        led.switch_green(duration=5)
+        try:
+            preds = json.loads(payload)
+            top = preds.sort(key=lambda pred: pred["class_score"],
+                             reverse=True)[0]["class_name"]
+            if top == "roadway_green":
+                led.switch_green(duration=3)
+            elif top == "roadway_red":
+                led.switch_red(duration=3)
+            elif top == "roadway_yellow":
+                led.switch_yellow(duration=3)
+            else:
+                led.switch_off_all()
+        except:
+            pass
 
     mqtt.add_message_callback(message_callback)
 

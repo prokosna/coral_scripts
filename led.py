@@ -19,6 +19,9 @@ class LED:
     def switch_red(self, duration=-1):
         self._switch_on([self._gpio_r], duration)
 
+    def switch_blue(self, duration=-1):
+        self._switch_on([self._gpio_b], duration)
+
     def switch_yellow(self, duration=-1):
         self._switch_on([self._gpio_g, self._gpio_r], duration)
 

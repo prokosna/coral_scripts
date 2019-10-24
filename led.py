@@ -14,6 +14,7 @@ class LED:
         self._latest_call_duration = None
         self._latest_call_color = None
         self._written_value = True if invert is False else False
+        self._switch_off()
         th = threading.Thread(target=self._switch_off_timer)
         th.daemon = True
         th.start()
@@ -68,10 +69,11 @@ class LED:
 
     def switch_off_all(self):
         self._lock.acquire()
-        self._switch_off()
-        self._latest_call_color = None
-        self._latest_call_time = None
-        self._latest_call_duration = None
+        if self._latest_call_color is not None:
+            self._switch_off()
+            self._latest_call_color = None
+            self._latest_call_time = None
+            self._latest_call_duration = None
         self._lock.release()
 
     def _switch_on(self, gpios, duration):

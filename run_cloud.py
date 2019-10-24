@@ -77,18 +77,18 @@ def main():
     def message_callback(payload):
         try:
             preds = json.loads(payload)
-            top = preds.sort(key=lambda pred: pred["class_score"],
-                             reverse=True)[0]["class_name"]
-            if top == "roadway_green":
+            preds.sort(key=lambda pred: pred['class_score'], reverse=True)
+            top = preds[0]['class_name']
+            if top == 'roadway_green':
                 led.switch_green(duration=3)
-            elif top == "roadway_red":
+            elif top == 'roadway_red':
                 led.switch_red(duration=3)
-            elif top == "roadway_yellow":
+            elif top == 'roadway_yellow':
                 led.switch_yellow(duration=3)
             else:
                 led.switch_off_all()
-        except:
-            pass
+        except Exception as ex:
+            print(ex)
 
     mqtt.add_message_callback(message_callback)
 

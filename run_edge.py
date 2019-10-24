@@ -26,6 +26,8 @@ def main():
     parser.add_argument('--labels', help='.txt label file')
     parser.add_argument('--threshold', help='Class Score Threshold',
                         type=float, default=0.7)
+    parser.add_argument('--top_k', help='Class Top K',
+                        type=int, default=2)
     args = parser.parse_args()
 
     engine = ClassificationEngine(args.model)
@@ -41,8 +43,8 @@ def main():
 
         start_time = time.monotonic()
         results = engine.ClassifyWithImage(image,
-                                           threshold=args.threshold,
-                                           top_k=1)
+                                           threshold=0.1,
+                                           top_k=args.top_k)
         end_time = time.monotonic()
 
         text_lines = [
@@ -56,15 +58,18 @@ def main():
             results.sort(key=lambda result: result[1], reverse=True)
             for index, score in results:
                 text_lines.append('score=%.2f: %s' % (score, labels[index]))
-            top = labels[results[0][0]]
-            if top == 'roadway_green':
-                led.switch_green(duration=0.1)
-            elif top == 'roadway_red':
-                led.switch_red(duration=0.1)
-            elif top == 'roadway_yellow':
-                led.switch_yellow(duration=0.1)
-            else:
-                led.switch_off_all()
+                
+            top_label = labels[results[0][0]]
+            top_score = results[0][1]
+            if top_score >= args.threshold:
+                if top_label == 'roadway_green':
+                    led.switch_green(duration=0.1)
+                elif top_label == 'roadway_red':
+                    led.switch_red(duration=0.1)
+                elif top_label == 'roadway_yellow':
+                    led.switch_yellow(duration=0.1)
+                else:
+                    led.switch_off_all()
 
         last_time = end_time
         print(' '.join(text_lines))

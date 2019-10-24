@@ -43,6 +43,7 @@ def main():
 
     input_monitor = InputMonitor()
     led = LED(gpio_r=6, gpio_g=7, gpio_b=8, invert=True)
+    led.switch_off_all()
 
     def user_callback(image, svg_canvas):
         nonlocal input_monitor

@@ -53,10 +53,10 @@ def main():
         if len(results) == 0:
             led.switch_off_all()
         else:
-            results.sort(key=lambda result: result['score'], reverse=True)
+            results.sort(key=lambda result: result[0], reverse=True)
             for index, score in results:
                 text_lines.append('score=%.2f: %s' % (score, labels[index]))
-            top = labels[results[0]['index']]
+            top = labels[results[0][1]]
             if top == 'roadway_green':
                 led.switch_green(duration=0.1)
             elif top == 'roadway_red':

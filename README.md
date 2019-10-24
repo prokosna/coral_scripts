@@ -61,7 +61,7 @@ Please replace arguments with correct GPIO pin numbers.
 Please run **python3 run_cloud.py --help** to see parameters description.
 
 ```
-$ sudo -E python3 run_cloud.py --project="PROJECT" --region="REGION" --registry_id="REGISTRY_ID" --device_id="DEVICE_ID" --private_key="PATH_TO_PRIVATE_KEY" --manual --bucket="GCS_BUCKET" --path="GCS_PATH"
+$ sudo -E python3 run_cloud.py --project="PROJECT" --region="REGION" --registry_id="REGISTRY_ID" --device_id="DEVICE_ID" --private_key="PATH_TO_PRIVATE_KEY" --bucket="GCS_BUCKET" --path="GCS_PATH"
 ```
 
 ## Run "Take"

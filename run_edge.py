@@ -25,13 +25,8 @@ def main():
     parser.add_argument('--model', help='.tflite model file')
     parser.add_argument('--labels', help='.txt label file')
     parser.add_argument('--threshold', help='Class Score Threshold',
-                        type=float, default=0.1)
+                        type=float, default=0.9)
     args = parser.parse_args()
-
-    if args.manual:
-        print('Press enter when you want to take a picture')
-    else:
-        print('FPS is {}'.format(args.fps))
 
     engine = ClassificationEngine(args.model)
     labels = load_labels(args.labels)
@@ -47,17 +42,32 @@ def main():
         start_time = time.monotonic()
         results = engine.ClassifyWithImage(image,
                                            threshold=args.threshold,
-                                           top_k=2)
+                                           top_k=1)
         end_time = time.monotonic()
 
         text_lines = [
          'Inference: %.2f ms' %((end_time - start_time) * 1000),
          'FPS: %.2f fps' %(1.0/(end_time - last_time)),
         ]
-        for index, score in results:
-            text_lines.append('score=%.2f: %s' % (score, labels[index]))
-        print(' '.join(text_lines))
+
+        if len(results) == 0:
+            led.switch_off_all()
+        else:
+            results.sort(key=lambda result: result['score'], reverse=True)
+            for index, score in results:
+                text_lines.append('score=%.2f: %s' % (score, labels[index]))
+            top = labels[results[0]['index']]
+            if top == 'roadway_green':
+                led.switch_green(duration=0.1)
+            elif top == 'roadway_red':
+                led.switch_red(duration=0.1)
+            elif top == 'roadway_yellow':
+                led.switch_yellow(duration=0.1)
+            else:
+                led.switch_off_all()
+
         last_time = end_time
+        print(' '.join(text_lines))
         generate_svg(svg_canvas, text_lines)
 
     gstreamer.run_pipeline(user_callback)

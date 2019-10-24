@@ -36,7 +36,8 @@ def main():
     engine = ClassificationEngine(args.model)
     labels = load_labels(args.labels)
 
-    led = LED(gpio_b=6, gpio_g=7, gpio_r=8, invert=True)
+    led = LED(gpio_r=6, gpio_g=7, gpio_b=8, invert=True)
+    led.switch_off_all()
 
     last_time = time.monotonic()
 

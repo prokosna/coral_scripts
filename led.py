@@ -69,6 +69,9 @@ class LED:
     def switch_off_all(self):
         self._lock.acquire()
         self._switch_off()
+        self._latest_call_color = None
+        self._latest_call_time = None
+        self._latest_call_duration = None
         self._lock.release()
 
     def _switch_on(self, gpios, duration):

@@ -33,7 +33,7 @@ class InputMonitor(threading.Thread):
                 diff = time.monotonic() - self._last_key_pressed_time
                 if v \
                    and not self._is_key_pressed \
-                   and diff > 0.1:
+                   and diff > 0.2:
                     self._lock.acquire()
                     self._is_key_pressed = True
                     self._last_key_pressed_time = time.monotonic()

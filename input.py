@@ -12,6 +12,7 @@ class InputMonitor(threading.Thread):
             self._gpio = GPIO(gpio_pin, 'in')
         self._lock = threading.Lock()
         self._is_key_pressed = False
+        self._last_key_pressed_time = time.monotonic()
 
     def is_key_pressed(self):
         self._lock.acquire()
@@ -29,9 +30,13 @@ class InputMonitor(threading.Thread):
         while True:
             if self._is_gpio:
                 v = self._gpio.read()
-                if v and not self._is_key_pressed:
+                diff = time.monotonic() - self._last_key_pressed_time
+                if v \
+                   and not self._is_key_pressed \
+                   and diff > 0.1:
                     self._lock.acquire()
                     self._is_key_pressed = True
+                    self._last_key_pressed_time = time.monotonic()
                     self._lock.release()
                 time.sleep(0.1)
             else:

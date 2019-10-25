@@ -3,6 +3,7 @@ import time
 import re
 
 import gstreamer
+from input import InputMonitor
 from led import LED
 from edgetpu.classification.engine import ClassificationEngine
 
@@ -28,19 +29,31 @@ def main():
                         type=float, default=0.7)
     parser.add_argument('--top_k', help='Class Top K',
                         type=int, default=2)
+    parser.add_argument('--manual', help='Take a picture when key pressed',
+                        action='store_true')
     args = parser.parse_args()
 
     engine = ClassificationEngine(args.model)
     labels = load_labels(args.labels)
 
-    led = LED(gpio_r=6, gpio_g=7, gpio_b=8, invert=True)
+    input_monitor = InputMonitor(gpio_pin=8)
+    led = LED(gpio_r=6, gpio_g=7, gpio_b=None, invert=True)
     led.switch_off_all()
+    light_duration = 3 if args.manual else 0.1
 
     last_time = time.monotonic()
+    
+    if args.manual:
+        input_monitor.daemon = True
+        input_monitor.start()
 
     def user_callback(image, svg_canvas):
         nonlocal last_time
 
+        if args.manual:
+            if not input_monitor.is_key_pressed():
+                return
+        
         start_time = time.monotonic()
         results = engine.ClassifyWithImage(image,
                                            threshold=0.1,
@@ -63,11 +76,11 @@ def main():
             top_score = results[0][1]
             if top_score >= args.threshold:
                 if top_label == 'roadway_green':
-                    led.switch_green(duration=0.1)
+                    led.switch_green(duration=light_duration)
                 elif top_label == 'roadway_red':
-                    led.switch_red(duration=0.1)
+                    led.switch_red(duration=light_duration)
                 elif top_label == 'roadway_yellow':
-                    led.switch_yellow(duration=0.1)
+                    led.switch_yellow(duration=light_duration)
                 else:
                     led.switch_off_all()
 

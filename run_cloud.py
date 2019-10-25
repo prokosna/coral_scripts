@@ -1,5 +1,4 @@
 import argparse
-import time
 import json
 
 import gstreamer
@@ -29,8 +28,8 @@ def main():
                         default=443)
     args = parser.parse_args()
 
-    input_monitor = InputMonitor()
-    led = LED(gpio_r=6, gpio_g=7, gpio_b=8, invert=True)
+    input_monitor = InputMonitor(gpio_pin=8)
+    led = LED(gpio_r=6, gpio_g=7, gpio_b=None, invert=True)
     led.switch_off_all()
 
     def user_callback(image, svg_canvas):

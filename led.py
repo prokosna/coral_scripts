@@ -7,9 +7,9 @@ from periphery import GPIO
 class LED:
     def __init__(self, gpio_r=1, gpio_b=2, gpio_g=3, invert=False):
         self._lock = threading.Lock()
-        self._gpio_g = GPIO(gpio_g, "out")
-        self._gpio_r = GPIO(gpio_r, "out")
-        self._gpio_b = GPIO(gpio_b, "out")
+        self._gpio_g = GPIO(gpio_g, "out") if gpio_g is not None else None
+        self._gpio_r = GPIO(gpio_r, "out") if gpio_r is not None else None
+        self._gpio_b = GPIO(gpio_b, "out") if gpio_b is not None else None
         self._latest_call_time = None
         self._latest_call_duration = None
         self._latest_call_color = None
@@ -81,12 +81,16 @@ class LED:
         self._latest_call_duration = duration
         self._switch_off()
         for gpio in gpios:
-            gpio.write(self._written_value)
+            if gpio is not None:
+                gpio.write(self._written_value)
 
     def _switch_off(self):
-        self._gpio_r.write(not self._written_value)
-        self._gpio_g.write(not self._written_value)
-        self._gpio_b.write(not self._written_value)
+        if self._gpio_r is not None:
+            self._gpio_r.write(not self._written_value)
+        if self._gpio_g is not None:
+            self._gpio_g.write(not self._written_value)
+        if self._gpio_b is not None:
+            self._gpio_b.write(not self._written_value)
 
     def _switch_off_timer(self):
         while True:
@@ -106,7 +110,10 @@ class LED:
 
     def dispose(self):
         self._lock.acquire()
-        self._gpio_g.close()
-        self._gpio_b.close()
-        self._gpio_r.close()
+        if self._gpio_g is not None:
+            self._gpio_g.close()
+        if self._gpio_b is not None:
+            self._gpio_b.close()
+        if self._gpio_r is not None:
+            self._gpio_r.close()
         self._lock.release()

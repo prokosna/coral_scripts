@@ -13,7 +13,7 @@ def main():
 
     print('Press enter or button when you want to take a picture')
 
-    input_monitor = InputMonitor()
+    input_monitor = InputMonitor(gpio_pin=8)
 
     def user_callback(image, svg_canvas):
         nonlocal input_monitor

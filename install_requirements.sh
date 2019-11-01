@@ -18,11 +18,6 @@ if grep -s -q "MX8MQ" /sys/firmware/devicetree/base/model; then
   sudo apt-get install python3-pip
   sudo pip3 install svgwrite
   sudo pip3 install python-periphery
-
-  # Original
-  sudo pip3 install google-cloud-storage
-  sudo pip3 install Pillow
-  sudo pip3 install paho-mqtt
 else
   # Install gstreamer
   sudo apt-get install -y gstreamer1.0-plugins-bad gstreamer1.0-plugins-good python3-gst-1.0 python3-gi
@@ -37,9 +32,10 @@ else
     fi
     sudo modprobe bcm2835-v4l2
   fi
-
-  # Original
-  sudo pip3 install google-cloud-storage
-  sudo pip3 install Pillow
-  sudo pip3 install paho-mqtt
 fi
+
+# Original
+sudo pip3 install google-cloud-storage
+sudo pip3 install Pillow
+sudo pip3 install paho-mqtt
+sudo pip3 install cryptography
